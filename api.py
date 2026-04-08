@@ -10,6 +10,9 @@ book = ContactBook()
 class Contact(BaseModel):
     name: str
     phone: str
+    
+class UpdateContact(BaseModel):
+    phone: str
 
 @app.post("/contacts")
 def add_contact(contact: Contact):
@@ -33,7 +36,14 @@ def find_contact(name: str):
     result = book.find(name)
     if not result:
      raise HTTPException(status_code=404, detail="Contact not found!")
-    return book.find(name)
+    return result
 
+@app.put("/contacts/{name}")
+def update_contact(name: str, contact: UpdateContact):
+    result = book.find(name)
+    if not result:
+     raise HTTPException(status_code=404, detail="Contact not found!")
+    book.update(name, contact.phone)
+    return {"message": "Updated successfully!"}
 
 
